@@ -18,7 +18,7 @@ func main() {
 		}
 	}()
 
-	credential := read()
+	creds := read()
 
 	if len(os.Args) < 2 {
 		panic("usage: git credential [fill|approve|reject]")
@@ -26,15 +26,15 @@ func main() {
 
 	switch os.Args[1] {
 	case "get":
-		get(&credential)
+		get(&creds)
 	case "store":
-		store(&credential)
+		store(&creds)
 	case "erase":
-		erase(&credential)
+		erase(&creds)
 	}
 }
 
-type Credential struct {
+type credential struct {
 	username string
 	password string
 	protocol string
@@ -44,8 +44,8 @@ type Credential struct {
 	// quit     bool
 }
 
-func get(credential *Credential) {
-	user := makeURL(credential)
+func get(creds *credential) {
+	user := makeURL(creds)
 
 	password, err := keyring.Get(Service, user)
 	if err != nil {
@@ -55,31 +55,31 @@ func get(credential *Credential) {
 	fmt.Println(password)
 }
 
-func store(credential *Credential) {
-	if credential.protocol == "" ||
-		(credential.host == "" && credential.path == "") ||
-		credential.username == "" ||
-		credential.password == "" {
+func store(creds *credential) {
+	if creds.protocol == "" ||
+		(creds.host == "" && creds.path == "") ||
+		creds.username == "" ||
+		creds.password == "" {
 		return
 	}
 
-	user := makeURL(credential)
+	user := makeURL(creds)
 	fmt.Println(user)
 
-	err := keyring.Set(Service, user, credential.password)
+	err := keyring.Set(Service, user, creds.password)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func erase(credential *Credential) {
-	if credential.protocol == "" ||
-		(credential.host == "" && credential.path == "") ||
-		credential.username == "" {
+func erase(creds *credential) {
+	if creds.protocol == "" ||
+		(creds.host == "" && creds.path == "") ||
+		creds.username == "" {
 		return
 	}
 
-	user := makeURL(credential)
+	user := makeURL(creds)
 
 	err := keyring.Delete(Service, user)
 	if err != nil {
@@ -87,9 +87,9 @@ func erase(credential *Credential) {
 	}
 }
 
-func read() Credential {
+func read() credential {
 	scanner := bufio.NewScanner(os.Stdin)
-	var credential Credential
+	var creds credential
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -110,36 +110,36 @@ func read() Credential {
 
 		switch key {
 		case "username":
-			credential.username = value
+			creds.username = value
 		case "password":
-			credential.password = value
+			creds.password = value
 		case "protocol":
-			credential.protocol = value
+			creds.protocol = value
 		case "host":
-			credential.host = value
+			creds.host = value
 		case "path":
-			credential.path = value
+			creds.path = value
 		case "url":
-			credential.url = value
-		// case "quit":
-		// 	credential.quit = value == "1" ||
-		// 		value == "true"
+			creds.url = value
+			// case "quit":
+			// 	creds.quit = value == "1" ||
+			// 		value == "true"
 		}
 	}
 
-	return credential
+	return creds
 }
 
-func makeURL(credential *Credential) string {
+func makeURL(creds *credential) string {
 	url :=
-		credential.protocol + "://" +
-			credential.username + "@"
+		creds.protocol + "://" +
+			creds.username + "@"
 
-	if credential.host != "" {
-		url += credential.host
+	if creds.host != "" {
+		url += creds.host
 	}
-	if credential.path != "" {
-		url += "/" + credential.path
+	if creds.path != "" {
+		url += "/" + creds.path
 	}
 
 	return url
