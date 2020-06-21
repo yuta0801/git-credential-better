@@ -9,7 +9,7 @@ import (
 	"github.com/zalando/go-keyring"
 )
 
-const Service = "git"
+const service = "git"
 
 func main() {
 	defer func() {
@@ -47,7 +47,7 @@ type credential struct {
 func get(creds *credential) {
 	user := makeURL(creds)
 
-	password, err := keyring.Get(Service, user)
+	password, err := keyring.Get(service, user)
 	if err != nil {
 		panic(err)
 	}
@@ -66,7 +66,7 @@ func store(creds *credential) {
 	user := makeURL(creds)
 	fmt.Println(user)
 
-	err := keyring.Set(Service, user, creds.password)
+	err := keyring.Set(service, user, creds.password)
 	if err != nil {
 		panic(err)
 	}
@@ -81,7 +81,7 @@ func erase(creds *credential) {
 
 	user := makeURL(creds)
 
-	err := keyring.Delete(Service, user)
+	err := keyring.Delete(service, user)
 	if err != nil {
 		panic(err)
 	}
