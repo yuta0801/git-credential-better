@@ -20,6 +20,10 @@ func main() {
 
 	credential := read()
 
+	if len(os.Args) < 2 {
+		panic("usage: git credential [fill|approve|reject]")
+	}
+
 	switch os.Args[1] {
 	case "get":
 		get(&credential)
