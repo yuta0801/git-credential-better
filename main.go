@@ -52,7 +52,8 @@ func get(creds *credential) {
 		panic(err)
 	}
 
-	fmt.Println(password)
+	creds.password = password
+	write(creds)
 }
 
 func store(creds *credential) {
@@ -128,6 +129,11 @@ func read() credential {
 	}
 
 	return creds
+}
+
+func write(creds *credential) {
+	fmt.Printf("username=%s\n", creds.username)
+	fmt.Printf("password=%s\n", creds.password)
 }
 
 func makeURL(creds *credential) string {
