@@ -9,7 +9,7 @@ import (
 	"github.com/zalando/go-keyring"
 )
 
-const service = "git"
+const service = "git-credential-better"
 
 func main() {
 	defer func() {
